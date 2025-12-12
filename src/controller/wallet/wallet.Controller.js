@@ -56,13 +56,15 @@ const depositToWallet = async (req, res) => {
     const userId = req.user?._id;
     if (!userId) return res.status(401).json({ message: "Chưa đăng nhập hoặc token không hợp lệ" });
 
-    const { amount, note } = req.body;
-    const MAX_AMOUNT = 10000000; // ví dụ 10 triệu
-    if (!amount || isNaN(amount) || amount <= 0 || !Number.isInteger(Number(amount)) || Number(amount) > MAX_AMOUNT) {
-      return res.status(400).json({ message: "Số tiền không hợp lệ!" });
+    const { amount, note, returnUrlBase } = req.body;
+
+    const money = Number(amount);
+
+    if (isNaN(money) || money < 2000 || money >= 10000000) {
+      return res.status(400).json({
+        message: "Số tiền không hợp lệ! Phải từ 2.000đ đến dưới 10.000.000đ"
+      });
     }
-
-
     // Lấy hoặc tạo ví người dùng
     let wallet = await Wallet.findOne({ userId });
     if (!wallet) {
@@ -86,12 +88,13 @@ const depositToWallet = async (req, res) => {
     });
 
     const frontUrl = process.env.FRONTEND_URL || "http://localhost:3000";
+    const baseRoute = returnUrlBase || '/wallet';
     const payload = {
       orderCode: orderCodeNumber,
       amount,
       description: `Nạp ví: ${note || ""}`.slice(0, 200),
-      returnUrl: `${frontUrl}/wallet/paymentsuccess`,
-      cancelUrl: `${frontUrl}/wallet/paymentcancel`,
+      returnUrl: `${frontUrl}${baseRoute}/paymentsuccess?return=${baseRoute}`,
+      cancelUrl: `${frontUrl}${baseRoute}/paymentcancel?return=${baseRoute}`,
     };
 
     if (!payos || !payos.paymentRequests?.create)
@@ -225,11 +228,9 @@ const withdrawFromWallet = async (req, res) => {
     const { amount, note, bankAccountId } = req.body;
 
     const n = Number(amount);
-    if (!amount || isNaN(n) || n <= 0 || !Number.isInteger(n)) {
-      return res.status(400).json({ message: "Số tiền không hợp lệ!" });
+    if (!amount || isNaN(n) || n < 2000 || !Number.isInteger(n)) {
+      return res.status(400).json({ message: "Số tiền tối thiểu phải từ 2.000 VNĐ!" });
     }
-
-
 
     if (!bankAccountId)
       return res.status(400).json({ message: "Vui lòng chọn tài khoản ngân hàng!" });
@@ -363,7 +364,4 @@ module.exports = {
   withdrawFromWallet,
   getRecentWalletTransactions,
   getWalletTransactions
-
-
-
 };
