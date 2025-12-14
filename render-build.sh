@@ -1,17 +1,15 @@
 #!/bin/bash
 set -e
 
-# Đặt cache dir (dù đã có env var nhưng để chắc)
 export PUPPETEER_CACHE_DIR=/opt/render/.cache/puppeteer
 
-# Tạo thư mục cache nếu chưa có
 mkdir -p $PUPPETEER_CACHE_DIR
 
-# Install Chrome thủ công vào cache dir persist của Render
-npx puppeteer browsers install chrome
+# Install Chrome mới nhất (không phụ thuộc version puppeteer yêu cầu)
+npx @puppeteer/browsers install chrome@latest
 
-# Install dependencies bình thường
+# Install dependencies
 npm install
 
-# Nếu project có lệnh build riêng (ví dụ NestJS, Next.js...)
+# Nếu có build khác
 # npm run build
