@@ -1,19 +1,17 @@
 #!/bin/bash
 set -e
 
+# Đặt cache dir (dù đã có env var nhưng để chắc)
 export PUPPETEER_CACHE_DIR=/opt/render/.cache/puppeteer
 
-if [[ ! -d $PUPPETEER_CACHE_DIR ]]; then
-  echo "Copying Puppeteer cache from build cache..."
-  mkdir -p $PUPPETEER_CACHE_DIR
-  cp -R /opt/render/project/src/.cache/puppeteer/* $PUPPETEER_CACHE_DIR || true
-fi
+# Tạo thư mục cache nếu chưa có
+mkdir -p $PUPPETEER_CACHE_DIR
 
-echo "Installing dependencies (Puppeteer will download Chromium if needed)..."
+# Install Chrome thủ công vào cache dir persist của Render
+npx puppeteer browsers install chrome
+
+# Install dependencies bình thường
 npm install
 
-# Nếu bạn có lệnh build riêng (ví dụ: next build, vite build,...)
+# Nếu project có lệnh build riêng (ví dụ NestJS, Next.js...)
 # npm run build
-
-echo "Storing Puppeteer cache for next deploy..."
-cp -R $PUPPETEER_CACHE_DIR /opt/render/project/src/.cache/puppeteer || true
