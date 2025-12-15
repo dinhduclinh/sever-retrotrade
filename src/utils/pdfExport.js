@@ -103,6 +103,7 @@ async function generatePDF({
 </html>
 `;
 
+process.env.PLAYWRIGHT_BROWSERS_PATH = "0";
   const browser = await playwright.chromium.launch({
     headless: true,
     args: [
