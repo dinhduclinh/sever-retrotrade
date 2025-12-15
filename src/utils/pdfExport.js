@@ -107,11 +107,6 @@ async function generatePDF({
       "--disable-setuid-sandbox",
       "--font-render-hinting=none",
     ],
-    executablePath:
-      "/opt/render/.cache/puppeteer/chrome/linux-*/chrome-linux64/chrome".replace(
-        "linux-*",
-        "linux-145.0.7575.2"
-      ),
   });
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle0" });
