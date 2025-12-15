@@ -105,8 +105,14 @@ async function generatePDF({
 
   const browser = await playwright.chromium.launch({
     headless: true,
-    channel: "chrome",
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage",
+      "--disable-gpu",
+      "--no-zygote",
+      "--single-process",
+    ],
   });
   const page = await browser.newPage();
   await page.setContent(html, { waitUntil: "networkidle" });
