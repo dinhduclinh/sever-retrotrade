@@ -33,7 +33,7 @@ const resend = new Resend(process.env.RESEND_API_KEY);
 module.exports.sendEmail = async (to, subject, html) => {
     try {
         const data = await resend.emails.send({
-            from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`, // RetroTrade <noreply@retrotrade.id.vn>
+            from: `${process.env.EMAIL_FROM_NAME} <${process.env.EMAIL_FROM}>`,
             to: [to],
             subject: subject,
             html: html,
